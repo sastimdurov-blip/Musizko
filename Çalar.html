@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Çalar">
+<title>Çalar</title>
+<style>
+:root{--bg:#0c0c10;--card:#17171e;--card2:#20202a;--tx:#f2f2f6;--mu:#9a9aa8;--ac:#8b7bff;--ac2:#b4a9ff;--sa:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:15px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;padding:0}
+#app{height:100dvh;display:flex;flex-direction:column}
+main{flex:1;overflow-y:auto;padding:calc(12px + var(--st)) 14px 16px;-webkit-overflow-scrolling:touch}
+h2{margin:6px 0 12px;font-size:22px}
+.search{display:flex;gap:8px;margin-bottom:10px}
+.search input,.fld{flex:1;min-width:0;background:var(--card);border:1px solid #2a2a36;border-radius:12px;padding:12px 14px;outline:none}
+.search input:focus,.fld:focus{border-color:var(--ac)}
+.btn{background:var(--ac);color:#10101a;font-weight:600;border-radius:12px;padding:0 16px;min-height:44px}
+.btn.alt{background:var(--card2);color:var(--tx)}
+.btn.danger{background:#3a1d24;color:#ff9aa8}
+.seg{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.chip{padding:7px 13px;border-radius:99px;background:var(--card);color:var(--mu);font-size:13px}
+.chip.on{background:var(--ac);color:#10101a;font-weight:600}
+.msg{color:var(--mu);padding:26px 6px;text-align:center}
+.row{display:flex;align-items:center;gap:11px;padding:8px 6px;border-radius:12px}
+.row:active{background:var(--card)}
+.row.cur .t{color:var(--ac2)}
+.art{width:50px;height:50px;border-radius:8px;object-fit:cover;background:var(--card2);flex:none}
+.meta{flex:1;min-width:0}
+.t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a{color:var(--mu);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ico{width:40px;height:40px;display:grid;place-items:center;border-radius:50%;flex:none;color:var(--tx)}
+.ico svg{width:22px;height:22px;fill:currentColor}
+.ico.on{color:var(--ac2)}
+.ico:active{background:var(--card2)}
+.card{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:14px;padding:15px 16px;margin-bottom:8px;width:100%;text-align:left}
+.card small{color:var(--mu)}
+.bar{display:flex;gap:8px;margin:4px 0 12px;flex-wrap:wrap}
+#mini{background:var(--card2);border-top:1px solid #2c2c3a}
+.mbar{height:2px;background:#33333f}#mfill{height:100%;width:0;background:var(--ac)}
+.mrow{display:flex;align-items:center;gap:8px;padding:7px 10px}
+.mrow .art{width:44px;height:44px}
+#nav{display:flex;background:var(--card);padding-bottom:var(--sa);border-top:1px solid #23232e}
+#nav button{flex:1;padding:13px 0;color:var(--mu);font-size:13px}
+#nav button.on{color:var(--ac2);font-weight:600}
+#np{position:fixed;inset:0;background:linear-gradient(#22203a,#0c0c10 70%);z-index:20;display:flex;flex-direction:column;padding:calc(10px + var(--st)) 22px calc(18px + var(--sa))}
+#npart{width:100%;max-width:340px;aspect-ratio:1;object-fit:cover;border-radius:16px;margin:auto;background:var(--card2);box-shadow:0 18px 50px #0008}
+.npt{font-size:21px;font-weight:700;margin-top:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.npa{color:var(--mu);margin-bottom:12px}
+#seek{width:100%;accent-color:var(--ac)}
+.times{display:flex;justify-content:space-between;color:var(--mu);font-size:12px}
+.ctl{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.ctl .ico{width:48px;height:48px}.ctl .ico svg{width:28px;height:28px}
+.ctl .big{width:68px;height:68px;background:var(--ac);color:#10101a}.ctl .big svg{width:34px;height:34px}
+#sheet{position:fixed;inset:0;background:#000a;z-index:30;display:flex;align-items:flex-end}
+.sh{background:var(--card);width:100%;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + var(--sa));max-height:75dvh;overflow:auto}
+.sh h3{margin:0 0 10px}
+#toast{position:fixed;left:50%;bottom:calc(150px + var(--sa));transform:translateX(-50%);background:#2e2e3c;padding:10px 16px;border-radius:99px;font-size:13px;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+#toast.on{opacity:1}
+.help{color:var(--mu);font-size:13px;margin:6px 2px 14px}
+.help a{color:var(--ac2)}
+label.opt{display:flex;gap:10px;align-items:center;padding:10px 0}
+</style>
+</head>
+<body>
+<div id="app">
+  <main id="main"></main>
+  <div id="mini" hidden>
+    <div class="mbar"><div id="mfill"></div></div>
+    <div class="mrow">
+      <img id="mart" class="art" alt="">
+      <div class="meta" id="mopen"><div class="t" id="mt"></div><div class="a" id="ma"></div></div>
+      <button class="ico" id="mprev" aria-label="Önceki"></button>
+      <button class="ico" id="mplay" aria-label="Çal / duraklat"></button>
+      <button class="ico" id="mnext" aria-label="Sonraki"></button>
+    </div>
+  </div>
+  <nav id="nav">
+    <button data-v="home" class="on">Keşfet</button>
+    <button data-v="lib">Kitaplık</button>
+    <button data-v="set">Ayarlar</button>
+  </nav>
+</div>
+
+<div id="np" hidden>
+  <div><button class="ico" id="npclose" aria-label="Kapat"></button></div>
+  <img id="npart" alt="">
+  <div class="npt" id="npt"></div>
+  <div class="npa" id="npa"></div>
+  <input type="range" id="seek" min="0" max="1000" value="0" aria-label="İlerleme">
+  <div class="times"><span id="tcur">0:00</span><span id="tdur">0:00</span></div>
+  <div class="ctl">
+    <button class="ico" id="bshuf" aria-label="Karışık"></button>
+    <button class="ico" id="bprev" aria-label="Önceki"></button>
+    <button class="ico big" id="bplay" aria-label="Çal / duraklat"></button>
+    <button class="ico" id="bnext" aria-label="Sonraki"></button>
+    <button class="ico" id="brep" aria-label="Tekrar"></button>
+  </div>
+  <div class="ctl" style="justify-content:center;gap:28px">
+    <button class="ico" id="bfav" aria-label="Favori"></button>
+    <button class="ico" id="badd" aria-label="Listeye ekle"></button>
+  </div>
+</div>
+<div id="sheet" hidden></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ---------- yardımcılar ---------- */
+const $ = s => document.querySelector(s);
+const APP = 'CalarKisisel';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = u => /^https:\/\//.test(u || '') ? u : '';
+const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#20202a"/><path d="M4 2.5v4.2a1.2 1.2 0 1 0 .8 1.1V4h2V2.5z" fill="#55556a"/></svg>');
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('calar.' + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('calar.' + k, JSON.stringify(v)); }catch(e){} }
+};
+const fmt = s => { if(!isFinite(s)) return '0:00'; s = Math.floor(s); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+const svg = d => '<svg viewBox="0 0 24 24"><path d="' + d + '"/></svg>';
+const I = {
+  play: svg('M8 5v14l11-7z'),
+  pause: svg('M6 5h4v14H6zM14 5h4v14h-4z'),
+  prev: svg('M6 6h2v12H6zM9.5 12l8.5 6V6z'),
+  next: svg('M16 6h2v12h-2zM6 18l8.5-6L6 6z'),
+  shuf: svg('M10.6 9.2L5.4 4 4 5.4l5.2 5.2 1.4-1.4zM14.5 4l2.05 2.05L4 18.6 5.4 20 17.95 7.45 20 9.5V4h-5.5zm.33 9.4l-1.4 1.4 3.12 3.12L14.5 20H20v-5.5l-2.05 2.05-3.12-3.15z'),
+  rep: svg('M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z'),
+  heart: svg('M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z'),
+  heartOn: svg('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'),
+  plus: svg('M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z'),
+  x: svg('M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'),
+  down: svg('M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z')
+};
+
+/* ---------- durum ---------- */
+const S = {
+  source: store.get('source', 'a'),          // a = Audius, j = Jamendo, all = ikisi
+  jid: store.get('jid', ''),                  // Jamendo client_id
+  favs: store.get('favs', []),
+  lists: store.get('lists', []),
+  q: '', results: null, queue: [], idx: -1, shuffle: false, repeat: 'off'
+};
+const cache = new Map();
+const reg = l => { l.forEach(t => cache.set(t.key, t)); return l; };
+const view = { name: 'home', list: [], listId: null };
+const hist = [];
+let errCount = 0, searchTok = 0, seeking = false;
+
+/* ---------- müzik kaynakları ---------- */
+async function getJSON(url){
+  let r;
+  try { r = await fetch(url); } catch(e){ throw new Error('Bağlantı kurulamadı'); }
+  if(!r.ok) throw new Error('Sunucu hatası (' + r.status + ')');
+  return r.json();
+}
+async function audius(q){
+  const u = q
+    ? 'https://api.audius.co/v1/tracks/search?query=' + encodeURIComponent(q) + '&limit=30&app_name=' + APP
+    : 'https://api.audius.co/v1/tracks/trending?limit=30&app_name=' + APP;
+  const j = await getJSON(u);
+  return (j.data || []).filter(t => t && t.id && t.is_streamable !== false && !t.is_stream_gated).map(t => ({
+    key: 'a:' + t.id, src: 'a', title: t.title || 'Adsız', artist: (t.user && t.user.name) || '',
+    art: safeUrl(t.artwork && (t.artwork['480x480'] || t.artwork['150x150'])),
+    url: 'https://api.audius.co/v1/tracks/' + encodeURIComponent(t.id) + '/stream?app_name=' + APP,
+    dur: t.duration || 0
+  }));
+}
+async function jamendo(q){
+  if(!S.jid) throw new Error('Jamendo için Ayarlar\'dan client_id gir');
+  const p = new URLSearchParams({ client_id: S.jid, format: 'json', limit: '30', imagesize: '300', audioformat: 'mp32' });
+  if(q) p.set('search', q); else p.set('order', 'popularity_week');
+  const j = await getJSON('https://api.jamendo.com/v3.0/tracks/?' + p);
+  if(j.headers && j.headers.status !== 'success') throw new Error('Jamendo: ' + (j.headers.error_message || 'hata'));
+  return (j.results || []).filter(t => t.audio).map(t => ({
+    key: 'j:' + t.id, src: 'j', title: t.name || 'Adsız', artist: t.artist_name || '',
+    art: safeUrl(t.image), url: safeUrl(t.audio), dur: t.duration || 0
+  }));
+}
+function interleave(lists){
+  const out = [], n = Math.max(0, ...lists.map(l => l.length));
+  for(let i = 0; i < n; i++) lists.forEach(l => { if(l[i]) out.push(l[i]); });
+  return out;
+}
+async function search(q){
+  const tok = ++searchTok; S.q = q;
+  const res = $('#res'); if(res) res.innerHTML = '<div class="msg">Yükleniyor…</div>';
+  const jobs = [];
+  if(S.source !== 'j') jobs.push(audius(q));
+  if(S.source !== 'a') jobs.push(jamendo(q));
+  const out = await Promise.allSettled(jobs);
+  if(tok !== searchTok) return;
+  const ok = out.filter(o => o.status === 'fulfilled').map(o => o.value);
+  const errs = out.filter(o => o.status === 'rejected').map(o => o.reason.message);
+  S.results = reg(interleave(ok));
+  S.error = errs.join(' · ');
+  if(view.name === 'home') renderResults();
+}
+
+/* ---------- oynatıcı ---------- */
+const au = new Audio();
+au.preload = 'auto';
+au.setAttribute('playsinline', '');
+const cur = () => S.queue[S.idx];
+
+function playQueue(list, i){ S.queue = list.slice(); S.idx = i; hist.length = 0; load(); }
+function load(){
+  const t = cur(); if(!t) return;
+  au.src = t.url;
+  const p = au.play(); if(p && p.catch) p.catch(() => {});
+  setMeta(t); paintNow();
+}
+function next(auto){
+  const n = S.queue.length; if(!n) return;
+  if(auto && S.repeat === 'one'){ au.currentTime = 0; au.play().catch(() => {}); return; }
+  let j;
+  if(S.shuffle && n > 1){ do { j = Math.floor(Math.random() * n); } while(j === S.idx); }
+  else {
+    j = S.idx + 1;
+    if(j >= n){ if(auto && S.repeat === 'off'){ au.pause(); au.currentTime = 0; return; } j = 0; }
+  }
+  hist.push(S.idx); if(hist.length > 200) hist.shift();
+  S.idx = j; load();
+}
+function prev(){
+  if(!S.queue.length) return;
+  if(au.currentTime > 3){ au.currentTime = 0; return; }
+  S.idx = hist.length ? hist.pop() : (S.idx - 1 + S.queue.length) % S.queue.length;
+  load();
+}
+const toggle = () => { if(!cur()) return; if(au.paused) au.play().catch(() => {}); else au.pause(); };
+
+au.addEventListener('ended', () => next(true));
+au.addEventListener('play', () => paintPlay(true));
+au.addEventListener('pause', () => paintPlay(false));
+au.addEventListener('playing', () => { errCount = 0; });
+au.addEventListener('loadedmetadata', onTime);
+au.addEventListener('timeupdate', onTime);
+au.addEventListener('error', () => {
+  if(!au.getAttribute('src')) return;
+  errCount++;
+  toast('Bu şarkı çalınamadı');
+  if(S.queue.length > 1 && errCount < S.queue.length) setTimeout(() => next(true), 700); else errCount = 0;
+});
+
+function onTime(){
+  const d = au.duration, c = au.currentTime;
+  const known = isFinite(d) && d > 0;
+  $('#mfill').style.width = known ? (c / d * 100) + '%' : '0';
+  $('#tcur').textContent = fmt(c);
+  $('#tdur').textContent = known ? fmt(d) : fmt((cur() || {}).dur);
+  if(!seeking && known) $('#seek').value = Math.round(c / d * 1000);
+  if('mediaSession' in navigator && known){
+    try { navigator.mediaSession.setPositionState({ duration: d, position: Math.min(c, d), playbackRate: au.playbackRate || 1 }); } catch(e){}
+  }
+}
+
+/* kilit ekranı / bildirim kontrolleri (arka planda çalma için) */
+function setMeta(t){
+  if(!('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: t.title, artist: t.artist, album: t.src === 'a' ? 'Audius' : 'Jamendo',
+      artwork: t.art ? [{ src: t.art, sizes: '480x480' }] : []
+    });
+  } catch(e){}
+}
+(function(){
+  if(!('mediaSession' in navigator)) return;
+  const h = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch(e){} };
+  h('play', () => au.play().catch(() => {}));
+  h('pause', () => au.pause());
+  h('previoustrack', prev);
+  h('nexttrack', () => next(false));
+  h('seekbackward', () => { au.currentTime = Math.max(0, au.currentTime - 10); });
+  h('seekforward', () => { au.currentTime = Math.min(au.duration || 1e9, au.currentTime + 10); });
+  h('seekto', e => { if(e.seekTime != null) au.currentTime = e.seekTime; });
+})();
+
+/* ---------- arayüz: oynatıcı ---------- */
+function paintPlay(on){
+  const ic = on ? I.pause : I.play;
+  $('#mplay').innerHTML = ic; $('#bplay').innerHTML = ic;
+  if('mediaSession' in navigator) navigator.mediaSession.playbackState = on ? 'playing' : 'paused';
+}
+function paintNow(){
+  const t = cur();
+  $('#mini').hidden = !t;
+  if(!t) return;
+  const art = t.art || PLACEHOLDER;
+  $('#mart').src = art; $('#npart').src = art;
+  $('#mt').textContent = t.title; $('#ma').textContent = t.artist;
+  $('#npt').textContent = t.title; $('#npa').textContent = t.artist;
+  $('#tdur').textContent = fmt(t.dur); $('#seek').value = 0;
+  paintFav();
+  document.querySelectorAll('.row').forEach(r => r.classList.toggle('cur', r.dataset.key === t.key));
+}
+function paintFav(){
+  const t = cur(); if(!t) return;
+  const f = isFav(t.key);
+  $('#bfav').innerHTML = f ? I.heartOn : I.heart; $('#bfav').classList.toggle('on', f);
+}
+function paintModes(){
+  $('#bshuf').classList.toggle('on', S.shuffle);
+  $('#brep').classList.toggle('on', S.repeat !== 'off');
+  $('#brep').style.position = 'relative';
+  $('#brep').innerHTML = I.rep + (S.repeat === 'one' ? '<b style="position:absolute;font-size:10px;top:15px;left:0;right:0;text-align:center">1</b>' : '');
+}
+
+/* ---------- favori / liste ---------- */
+const isFav = k => S.favs.some(t => t.key === k);
+function toggleFav(k){
+  const t = cache.get(k); if(!t) return;
+  if(isFav(k)) S.favs = S.favs.filter(x => x.key !== k); else S.favs.unshift(t);
+  store.set('favs', S.favs);
+  paintFav();
+  if(view.name === 'list' && view.listId === 'fav') renderList(); else refreshRows();
+}
+function saveLists(){ store.set('lists', S.lists); }
+function addToList(id, k){
+  const t = cache.get(k), L = S.lists.find(x => x.id === id); if(!t || !L) return;
+  if(L.tracks.some(x => x.key === k)){ toast('Zaten listede'); return; }
+  L.tracks.push(t); saveLists(); toast('"' + L.name + '" listesine eklendi');
+}
+function newList(name){
+  name = name.trim(); if(!name) return null;
+  const L = { id: Date.now().toString(36), name, tracks: [] };
+  S.lists.push(L); saveLists(); return L;
+}
+function refreshRows(){
+  document.querySelectorAll('.row').forEach(r => {
+    const b = r.querySelector('[data-act="fav"]'); if(!b) return;
+    const f = isFav(r.dataset.key); b.innerHTML = f ? I.heartOn : I.heart; b.classList.toggle('on', f);
+  });
+}
+
+/* ---------- arayüz: listeler ---------- */
+function rowsHTML(tracks, inList){
+  if(!tracks.length) return '<div class="msg">Burada henüz şarkı yok.</div>';
+  return tracks.map((t, i) => {
+    const f = isFav(t.key), c = cur() && cur().key === t.key;
+    return '<div class="row' + (c ? ' cur' : '') + '" data-i="' + i + '" data-key="' + esc(t.key) + '">' +
+      '<img class="art" loading="lazy" alt="" src="' + esc(t.art || PLACEHOLDER) + '">' +
+      '<div class="meta"><div class="t">' + esc(t.title) + '</div><div class="a">' + esc(t.artist) + ' · ' + (t.src === 'a' ? 'Audius' : 'Jamendo') + '</div></div>' +
+      '<button class="ico' + (f ? ' on' : '') + '" data-act="fav" aria-label="Favori">' + (f ? I.heartOn : I.heart) + '</button>' +
+      (inList && view.listId !== 'fav'
+        ? '<button class="ico" data-act="rm" aria-label="Listeden çıkar">' + I.x + '</button>'
+        : '<button class="ico" data-act="add" aria-label="Listeye ekle">' + I.plus + '</button>') +
+      '</div>';
+  }).join('');
+}
+function bindRows(el){
+  el.onclick = e => {
+    const row = e.target.closest('.row'); if(!row) return;
+    const key = row.dataset.key, act = e.target.closest('[data-act]');
+    if(act){
+      const a = act.dataset.act;
+      if(a === 'fav') toggleFav(key);
+      else if(a === 'add') openAddSheet(key);
+      else if(a === 'rm'){
+        const L = S.lists.find(x => x.id === view.listId);
+        if(L){ L.tracks = L.tracks.filter(x => x.key !== key); saveLists(); renderList(); }
+      }
+      return;
+    }
+    playQueue(view.list, +row.dataset.i);
+  };
+}
+
+/* ---------- ekranlar ---------- */
+const main = $('#main');
+function go(name){
+  view.name = name; view.listId = null;
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.v === (name === 'list' ? 'lib' : name)));
+  main.scrollTop = 0;
+  if(name === 'home') renderHome(); else if(name === 'lib') renderLib(); else renderSettings();
+}
+function renderHome(){
+  main.innerHTML =
+    '<form class="search" id="sf"><input id="q" type="search" placeholder="Şarkı veya sanatçı ara" enterkeyhint="search" autocomplete="off"><button class="btn">Ara</button></form>' +
+    '<div class="seg" id="seg"></div><div id="res"></div>';
+  $('#q').value = S.q;
+  $('#sf').onsubmit = e => { e.preventDefault(); $('#q').blur(); search($('#q').value.trim()); };
+  const seg = $('#seg');
+  [['a', 'Audius'], ['j', 'Jamendo'], ['all', 'İkisi']].forEach(([v, n]) => {
+    const b = document.createElement('button'); b.className = 'chip' + (S.source === v ? ' on' : ''); b.textContent = n;
+    b.onclick = () => { S.source = v; store.set('source', v); renderHome(); search(S.q); };
+    seg.appendChild(b);
+  });
+  if(S.results) renderResults(); else search('');
+}
+function renderResults(){
+  const res = $('#res'); if(!res) return;
+  const head = S.q ? '' : '<div class="help">Şu an popüler olanlar</div>';
+  let html = head;
+  if(S.error) html += '<div class="help">⚠ ' + esc(S.error) + '</div>';
+  view.list = S.results || [];
+  html += view.list.length ? rowsHTML(view.list, false) : (S.error ? '' : '<div class="msg">Sonuç bulunamadı.</div>');
+  res.innerHTML = html; bindRows(res);
+}
+function renderLib(){
+  view.name = 'lib';
+  let h = '<h2>Kitaplık</h2><button class="card" data-open="fav"><span>♥ Favoriler</span><small>' + S.favs.length + ' şarkı</small></button>';
+  S.lists.forEach(L => { h += '<button class="card" data-open="' + esc(L.id) + '"><span>' + esc(L.name) + '</span><small>' + L.tracks.length + ' şarkı</small></button>'; });
+  h += '<form class="search" id="nl" style="margin-top:14px"><input class="fld" id="nln" placeholder="Yeni çalma listesi adı" maxlength="60"><button class="btn">Oluştur</button></form>';
+  main.innerHTML = h;
+  main.querySelectorAll('[data-open]').forEach(b => b.onclick = () => openList(b.dataset.open));
+  $('#nl').onsubmit = e => { e.preventDefault(); if(newList($('#nln').value)) renderLib(); };
+}
+function openList(id){ view.name = 'list'; view.listId = id; main.scrollTop = 0; renderList(); }
+function renderList(){
+  const fav = view.listId === 'fav';
+  const L = fav ? { name: 'Favoriler', tracks: S.favs } : S.lists.find(x => x.id === view.listId);
+  if(!L){ renderLib(); return; }
+  view.list = L.tracks; L.tracks.forEach(t => cache.set(t.key, t));
+  main.innerHTML = '<div class="bar"><button class="btn alt" id="lb">← Geri</button><button class="btn" id="lp">▶ Çal</button><button class="btn alt" id="ls">Karıştır</button>' +
+    (fav ? '' : '<button class="btn danger" id="ld">Sil</button>') + '</div><h2>' + esc(L.name) + '</h2><div id="res">' + rowsHTML(L.tracks, true) + '</div>';
+  $('#lb').onclick = () => go('lib');
+  $('#lp').onclick = () => { if(L.tracks.length){ S.shuffle = false; paintModes(); playQueue(L.tracks, 0); } };
+  $('#ls').onclick = () => { if(L.tracks.length){ S.shuffle = true; paintModes(); playQueue(L.tracks, Math.floor(Math.random() * L.tracks.length)); } };
+  if(!fav) $('#ld').onclick = () => { if(confirm('"' + L.name + '" silinsin mi?')){ S.lists = S.lists.filter(x => x.id !== L.id); saveLists(); go('lib'); } };
+  bindRows($('#res'));
+}
+function renderSettings(){
+  main.innerHTML =
+    '<h2>Ayarlar</h2>' +
+    '<div class="help">Müzik kaynağı</div>' +
+    ['a|Audius (anahtar gerekmez)', 'j|Jamendo (ücretsiz anahtar gerekir)', 'all|İkisi birden'].map(s => {
+      const [v, n] = s.split('|');
+      return '<label class="opt"><input type="radio" name="src" value="' + v + '"' + (S.source === v ? ' checked' : '') + '> ' + n + '</label>';
+    }).join('') +
+    '<div class="help" style="margin-top:14px">Jamendo client_id (<a href="https://devportal.jamendo.com" target="_blank" rel="noopener">devportal.jamendo.com</a> adresinden ücretsiz alınır)</div>' +
+    '<input class="fld" id="jid" style="width:100%" placeholder="örn. 1a2b3c4d" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+    '<div class="bar" style="margin-top:12px"><button class="btn" id="sv">Kaydet</button></div>' +
+    '<div class="help">Şarkılar Audius ve Jamendo üzerinden yayınlanır; müzikler sanatçıların kendi izniyle ücretsiz sunulur. Lütfen sanatçılara kredi ver.<br>Telefonda ekran kapalıyken çalması için sayfayı tarayıcıda açık bırakman yeterli; kilit ekranından da kontrol edebilirsin.</div>';
+  $('#jid').value = S.jid;
+  $('#sv').onclick = () => {
+    const r = main.querySelector('input[name=src]:checked');
+    if(r){ S.source = r.value; store.set('source', S.source); }
+    S.jid = $('#jid').value.trim(); store.set('jid', S.jid);
+    S.results = null; toast('Kaydedildi');
+  };
+}
+
+/* ---------- liste ekleme penceresi ---------- */
+function openSheet(html){ const sh = $('#sheet'); sh.innerHTML = '<div class="sh">' + html + '</div>'; sh.hidden = false; sh.onclick = e => { if(e.target === sh) closeSheet(); }; }
+function closeSheet(){ $('#sheet').hidden = true; $('#sheet').innerHTML = ''; }
+function openAddSheet(key){
+  let h = '<h3>Listeye ekle</h3>';
+  S.lists.forEach(L => { h += '<button class="card" data-id="' + esc(L.id) + '"><span>' + esc(L.name) + '</span><small>' + L.tracks.length + '</small></button>'; });
+  h += '<form class="search" id="sn" style="margin-top:8px"><input class="fld" id="snn" placeholder="Yeni liste adı" maxlength="60"><button class="btn">Oluştur</button></form>';
+  openSheet(h);
+  $('#sheet').querySelectorAll('[data-id]').forEach(b => b.onclick = () => { addToList(b.dataset.id, key); closeSheet(); });
+  $('#sn').onsubmit = e => { e.preventDefault(); const L = newList($('#snn').value); if(L){ addToList(L.id, key); closeSheet(); } };
+}
+
+/* ---------- bildirim ---------- */
+let toastT;
+function toast(m){ const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
+
+/* ---------- bağlantılar ---------- */
+$('#mprev').innerHTML = I.prev; $('#mnext').innerHTML = I.next; $('#bprev').innerHTML = I.prev; $('#bnext').innerHTML = I.next;
+$('#bshuf').innerHTML = I.shuf; $('#npclose').innerHTML = I.down; $('#badd').innerHTML = I.plus;
+paintPlay(false); paintModes();
+$('#mplay').onclick = $('#bplay').onclick = toggle;
+$('#mprev').onclick = $('#bprev').onclick = prev;
+$('#mnext').onclick = $('#bnext').onclick = () => next(false);
+$('#mopen').onclick = $('#mart').onclick = () => { $('#np').hidden = false; };
+$('#npclose').onclick = () => { $('#np').hidden = true; };
+$('#bshuf').onclick = () => { S.shuffle = !S.shuffle; paintModes(); };
+$('#brep').onclick = () => { S.repeat = S.repeat === 'off' ? 'all' : S.repeat === 'all' ? 'one' : 'off'; paintModes(); };
+$('#bfav').onclick = () => { const t = cur(); if(t) toggleFav(t.key); };
+$('#badd').onclick = () => { const t = cur(); if(t) openAddSheet(t.key); };
+$('#seek').addEventListener('input', () => { seeking = true; if(au.duration) $('#tcur').textContent = fmt($('#seek').value / 1000 * au.duration); });
+$('#seek').addEventListener('change', () => { if(au.duration) au.currentTime = $('#seek').value / 1000 * au.duration; seeking = false; });
+document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.v));
+document.addEventListener('keydown', e => { if(e.code === 'Space' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)){ e.preventDefault(); toggle(); } });
+
+/* ana ekrana eklenebilsin diye manifest */
+try {
+  const icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#0c0c10"/><path d="M200 130v190a60 60 0 1 0 40 56V200h110v-70z" fill="#8b7bff"/></svg>');
+  const m = { name: 'Çalar', short_name: 'Çalar', display: 'standalone', background_color: '#0c0c10', theme_color: '#0c0c10', start_url: location.href.split('#')[0], icons: [{ src: icon, sizes: 'any', type: 'image/svg+xml', purpose: 'any' }] };
+  const l = document.createElement('link'); l.rel = 'manifest'; l.href = URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' }));
+  document.head.appendChild(l);
+} catch(e){}
+
+go('home');
+</script>
+</body>
+</html>
